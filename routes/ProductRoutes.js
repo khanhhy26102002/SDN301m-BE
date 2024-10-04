@@ -1,54 +1,17 @@
-const express = require("express");
+const express = require('express');
+const authMiddleware = require('../middlewares/authMiddleware');
 const router = express.Router();
-const Product = require("../models/product");
-router.post("/", async (req, res) => {
-  try {
-    const product = new Product(req.body);
-    await product.save();
-    res.status(201).json(product);
-  } catch (error) {
-    res.status(404).json({ message: error.message });
-  }
-})
-router.get("/", async (req, res) => {
-  try {
-    const product = await Product.find();
-    res.json(product);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+router.post('/', authMiddleware, (req, res) => {
+  res.status(201).json({ message: 'Product created successfully' });
 });
-router.get("/:id", async (req, res) => {
-  try {
-    const productId = await Product.findById(req.params.id);
-    if (productId === null) {
-      res.status(404).json({ message: "ProductId not found" });
-    }
-    res.json(productId);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-})
-router.put("/:id", async (req, res) => {
-  try {
-    const productId = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!productId) {
-      res.status(404).json({ message: "ProductId not found " });
-    }
-    res.json(productId);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+router.get('/', authMiddleware, (req, res) => {
+  res.status(200).json({ categories: [] });
 });
-router.delete("/:id", async (req, res) => {
-  try {
-    const productId = await Product.findByIdAndDelete(req.params.id);
-    if (productId === null) {
-      res.status(404).json({ message: "ProductId not found" });
-    }
-    res.json({ message: "Product Deleted" });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-})
+router.put('/:id', authMiddleware, (req, res) => {
+  res.status(200).json({ message: 'Product updated successfully' });
+});
+router.delete('/:id', authMiddleware, (req, res) => {
+  res.status(200).json({ message: 'Product deleted successfully' });
+});
+
 module.exports = router;

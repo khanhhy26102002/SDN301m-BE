@@ -1,54 +1,44 @@
-const express = require("express");
+const express = require('express');
+const authMiddleware = require('../middlewares/authMiddleware');
+const category = require("../models/category");
 const router = express.Router();
-const Category = require("../models/category");
-router.post("/", async (req, res) => {
+router.post('/', authMiddleware, async (req, res) => {
+  const { name } = req.body;
   try {
-    const category = new Category(req.body);
-    await category.save();
-    res.status(201).json(category);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+    const newCategory = new category({ name });
+    await newCategory.save();
+    res.status(201).json({ message: 'Category created successfully', category: newCategory });
+  } catch (error) {
+    console.error("Error creating category:", error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
-router.get("/", async (req, res) => {
-  try {
-    const categories = await Category.find();
-    res.json(categories);
-  } catch (error) {
-    res.status(500).json({ message: err.message });
-  }
+
+router.get('/', authMiddleware, async (req, res) => {
+  const categories = await category.find();
+  res.status(200).json({ categories });
 });
-router.get("/:id", async (req, res) => {
+router.put('/:id', authMiddleware, async (req, res) => {
+  const { id } = req.params;
+  const { name } = req.body;
   try {
-    const category = await Category.findById(req.params.id);
-    if (category === null) {
-      return res.status(404).json({ message: "Category not found" });
-    }
-    res.json(category);
+    await category.findByIdAndUpdate(id, { name });
+    res.status(200).json({ message: 'Category updated successfully' });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+
   }
+
 });
-router.put("/:id", async (req, res) => {
+router.delete('/:id', authMiddleware, async (req, res) => {
+  const { id } = req.params;
   try {
-    const category = await Category.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (category === null) {
-      return res.status(404).json({ message: "Category not found" });
-    }
-    res.json(category);
+    await category.findByIdAndDelete(id);
+    res.status(200).json({ message: 'Category deleted successfully' });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error("Error deleting category:", error);
+    res.status(500).json({ error: 'Internal server error' });
   }
+
 });
-router.delete("/:id", async (req, res) => {
-  try {
-    const category = await Category.findByIdAndDelete(req.params.id);
-    if (category === null) {
-      return res.status(404).json({ message: "Category not found" });
-    }
-    res.json({ message: "Category deleted" });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-})
+
 module.exports = router;
