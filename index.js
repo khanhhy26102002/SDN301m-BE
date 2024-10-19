@@ -26,13 +26,14 @@ const cors = require("cors");
 const category = require("./routes/CategoryRoutes");
 const product = require("./routes/ProductRoutes");
 const login = require("./routes/LoginRoutes");
+const authMiddleware = require("./middlewares/authMiddleware");
 const app = express();
 app.set('view engine', 'ejs');
 app.set('views', './views');
 app.use(cors());
 app.use(cors({
-    origin: 'http://localhost:3000', // Your front-end URL
-    allowedHeaders: ['Authorization', 'Content-Type'] // Allow Authorization and other headers
+  origin: 'http://localhost:3000',
+  allowedHeaders: ['Authorization', 'Content-Type'],
 }));
 app.use(express.json());
 const url = "mongodb://localhost:27017/Category";
