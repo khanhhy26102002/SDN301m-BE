@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category List</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script>
+        function confirmDelete(id) {
+            if (confirm("Bạn có chắc muốn xóa mục này?")) {
+                document.getElementById(`delete-form-${id}`).submit();
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Danh sách Category</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>name</th>
+                <th>Description</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% categories.forEach(category => { %>
+                <tr>
+                    <td><%= category.name %></td>
+                    <td><%= category.description %></td>
+                    <td>
+                        <form id="delete-form-<%= category._id %>" method="POST" action="/api/category/delete/<%= category._id %>" style="display:inline;">
+                            <button type="button" onclick="confirmDelete('<%= category._id %>')">Xóa</button>
+                        </form>
+                        <a href="/api/category/update/<%= category._id %>">Sửa</a>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</body>
+</html>
