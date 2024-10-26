@@ -47,37 +47,56 @@
 const express = require('express');
 const router = express.Router();
 const Category = require('../models/Category');
-
-// Lấy tất cả Category
-router.get('/', async (req, res) => {
+router.get('/categories', async (req, res) => {
   try {
-      const categories = await Category.find();
-      res.render('category', { categories });
+    const categories = await Category.find();
+    res.render('category', { categories });
   } catch (error) {
-      console.error("Error fetching categories: ", error);
-      res.status(500).send("Error fetching categories.");
+    res.status(500).json({ message: error.message });
   }
 });
-
-// Tạo mới Category
-router.post('/create', async (req, res) => {
-    const newCategory = new Category(req.body);
+router.post('/categories/create', async (req, res) => {
+  const { name, description } = req.body;
+  try {
+    const newCategory = new Category({ name, description });
     await newCategory.save();
-    res.redirect('/api/category');
+    res.redirect('/api/category/categories');
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
-
-// Cập nhật Category
+router.get('/categories/create', (req, res) => {
+  res.render('createCategory');
+});
+router.get("/category/editcategory", (req, res) => {
+  res.render("editcategory");
+})
 router.post('/update/:id', async (req, res) => {
-    const { id } = req.params;
-    await Category.findByIdAndUpdate(id, req.body);
-    res.redirect('/api/category');
+  const { name, description } = req.body;
+  try {
+      await Category.findByIdAndUpdate(req.params.id, { name, description });
+      res.redirect('/api/category/categories'); // Redirect after updating
+  } catch (error) {
+      res.status(500).json({ message: error.message });
+  }
 });
-
-// Xóa Category
+router.get('/update/:id', async (req, res) => {
+  try {
+    const category = await Category.findById(req.params.id);
+    if (!category) {
+      return res.status(404).send('Category not found');
+    }
+    res.render('editCategory', { category });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 router.post('/delete/:id', async (req, res) => {
-    const { id } = req.params;
-    await Category.findByIdAndDelete(id);
-    res.redirect('/api/category');
+  await Category.findByIdAndDelete(req.params.id);
+  res.redirect('/api/category/categories');
 });
-
+router.get('/delete/:id', async (req, res) => {
+  await Category.findByIdAndDelete(req.params.id);
+  res.redirect('/api/category/categories');
+});
 module.exports = router;

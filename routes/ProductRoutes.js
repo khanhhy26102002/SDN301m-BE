@@ -68,9 +68,8 @@
 const express = require('express');
 const router = express.Router();
 const Product = require('../models/Product');
-const Category = require('../models/Category'); // Để lấy danh sách Category cho form
-
-// Lấy tất cả sản phẩm
+const Category = require('../models/Category');
+const product = require('../models/Product');
 router.get('/', async (req, res) => {
     try {
         const categories = await Category.find();
@@ -81,9 +80,6 @@ router.get('/', async (req, res) => {
         res.status(500).send('Error fetching products.');
     }
 });
-
-// Tạo mới sản phẩm
-// Tạo mới sản phẩm
 router.post('/create', async (req, res) => {
     try {
         console.log(req.body);
@@ -95,7 +91,7 @@ router.post('/create', async (req, res) => {
             category
         });
         await newProduct.save();
-        res.redirect('/api/product'); // Redirect về trang danh sách sản phẩm sau khi thêm thành công
+        res.redirect('/api/product');
     } catch (error) {
         console.error('Error creating product:', error);
         res.status(500).send('Error creating product.');

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="vi">
+    <head>
+        <meta charset="UTF-8">
+        <title>Cập nhật Danh mục</title>
+        <link rel="stylesheet" />
+    </head>
+    <style>
+    body {
+    font-family: Arial, sans-serif;
+}
+
+form {
+    margin: 20px;
+}
+
+div {
+    margin-bottom: 10px;
+}
+
+</style>
+    <body>
+        <h1>Cập nhật Danh mục</h1>
+        <form action="/api/category/update/<%= category._id %>" method="POST">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name"
+                value="<%= category.name %>" required>
+            <br>
+            <label for="description">Description:</label>
+            <textarea id="description" name="description"
+                required><%= category.description %></textarea>
+            <br>
+            <button type="submit">Update Category</button>
+        </form>
+        <a href="/api/category">Quay lại</a>
+    </body>
+</html>
