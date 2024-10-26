@@ -73,7 +73,7 @@ const product = require('../models/Product');
 router.get('/', async (req, res) => {
     try {
         const categories = await Category.find();
-        const products = await Product.find().populate('category'); // Lấy cả thông tin category
+        const products = await Product.find().populate('category');
         res.render('product', { products, categories });
     } catch (error) {
         console.error('Error fetching products: ', error);
@@ -97,20 +97,18 @@ router.post('/create', async (req, res) => {
         res.status(500).send('Error creating product.');
     }
 });
-
-// Cập nhật sản phẩm
 router.post('/update/:id', async (req, res) => {
     try {
         const { id } = req.params;
+        console.log(req.body);
         await Product.findByIdAndUpdate(id, req.body);
+
         res.redirect('/api/product');
     } catch (error) {
         console.error('Error updating product: ', error);
         res.status(500).send('Error updating product.');
     }
 });
-
-// Xóa sản phẩm
 router.post('/delete/:id', async (req, res) => {
     try {
         const { id } = req.params;
